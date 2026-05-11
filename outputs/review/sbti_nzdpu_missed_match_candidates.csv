@@ -1,0 +1,3 @@
+sbti_id,sbti_company_name,sbti_lei,nz_id,nzdpu_company_name,nzdpu_lei,match_method,match_score,years_available,has_scope1,has_scope3,review_status
+40008088,Axione,,14228,Axilone Group,,fuzzy_token_similarity,0.9231,"2018, 2019, 2020, 2021, 2022",TRUE,TRUE,needs_review
+40023088,Groupe SNCF,,16890,SNF Group,,fuzzy_token_similarity,0.8571,"2018, 2019, 2020, 2021, 2022",TRUE,TRUE,needs_review

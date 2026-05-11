@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+
+# Environment and local secrets
+.env
+.env.*
+
+# R session/user files
+.Rhistory
+.RData
+.Rproj.user/
+
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Local tool settings
+.claude/settings.local.json
+
+# Heavy source reports kept locally
+Carbon data extraction/inputs/reports/
