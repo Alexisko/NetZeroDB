@@ -3,7 +3,7 @@
 #
 # Input:  inputs/sbti/targets-excel.xlsx   (primary — one row per target)
 #         inputs/sbti/companies-excel.xlsx  (company metadata & commitment status)
-# Output: data_prepared/sbti_targets.rds
+# Output: shiny_app/data_prepared/sbti_targets.rds
 
 library(readxl)
 library(dplyr)
@@ -163,10 +163,10 @@ if (nrow(outliers) > 0) {
 
 # ── 7. Save ───────────────────────────────────────────────────────────────────
 
-saveRDS(sbti_targets, "data_prepared/sbti_targets.rds")
+saveRDS(sbti_targets, "shiny_app/data_prepared/sbti_targets.rds")
 
 message(
-  "Saved data_prepared/sbti_targets.rds\n",
+  "Saved shiny_app/data_prepared/sbti_targets.rds\n",
   "  Rows: ", nrow(sbti_targets), "\n",
   "  Companies: ", length(unique(sbti_targets$sbti_id)), "\n",
   "  Columns: ", ncol(sbti_targets)

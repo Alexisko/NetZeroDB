@@ -3,7 +3,7 @@ library(bslib)
 library(plotly)
 library(dplyr)
 
-source("../R/utils/sector_mapping.R")
+source("utils/sector_mapping.R")
 
 # ── Source colour palette ─────────────────────────────────────────────────────
 

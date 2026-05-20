@@ -4,7 +4,7 @@ library(plotly)
 library(dplyr)
 library(tidyr)
 
-source("../R/utils/sector_mapping.R")
+source("utils/sector_mapping.R")
 
 # ── Colour palette ────────────────────────────────────────────────────────────
 
@@ -725,6 +725,7 @@ netZeroPathwayServer <- function(id, uk_ccc_data, snbc_data, iea_data, sbti_data
               hover_text = paste0(
                 "<b>", company_name, "</b><br>",
                 "Base year: ", base_year, "<br>",
+                "Scope: ", scope, "<br>",
                 "Year: ", year, "<br>",
                 "Target: ", target_label, "<br>",
                 "Index: ", index_label, " (vs. 2025)"

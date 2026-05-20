@@ -4,7 +4,7 @@
 #
 # Inputs:  inputs/iea/WEO2025_AnnexA_Free_Dataset_World.csv
 #          inputs/iea/WEO2025_AnnexA_Free_Dataset_Regions.csv
-# Output:  data_prepared/iea_emissions.rds
+# Output:  shiny_app/data_prepared/iea_emissions.rds
 #
 # Filtering logic:
 #   CATEGORY == "CO2 total"
@@ -79,10 +79,10 @@ stopifnot(
 
 # ── 6. Save ───────────────────────────────────────────────────────────────────
 
-saveRDS(iea_emissions, "data_prepared/iea_emissions.rds")
+saveRDS(iea_emissions, "shiny_app/data_prepared/iea_emissions.rds")
 
 message(
-  "Saved data_prepared/iea_emissions.rds\n",
+  "Saved shiny_app/data_prepared/iea_emissions.rds\n",
   "  Rows:      ", nrow(iea_emissions), "\n",
   "  Sectors:   ", paste(sort(unique(iea_emissions$sector)), collapse = ", "), "\n",
   "  Scenarios: ", paste(sort(unique(iea_emissions$scenario)), collapse = ", "), "\n",

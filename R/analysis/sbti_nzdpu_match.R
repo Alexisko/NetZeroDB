@@ -2,10 +2,10 @@
 # Joins SBTi targets (what French companies promised) with NZDPU emissions
 # (what they actually emitted) to assess whether companies are on track.
 #
-# Input:  data_prepared/sbti_targets.rds
-#         data_prepared/nzdpu_french_companies.rds
+# Input:  shiny_app/data_prepared/sbti_targets.rds
+#         shiny_app/data_prepared/nzdpu_french_companies.rds
 #         inputs/manual_matches.csv          (optional — user-curated pairs)
-# Output: data_prepared/sbti_nzdpu_matched.rds
+# Output: shiny_app/data_prepared/sbti_nzdpu_matched.rds
 #         outputs/review/sbti_unmatched_corporate.csv
 #         outputs/review/nzdpu_unmatched.csv
 #
@@ -18,8 +18,8 @@ library(stringr)
 
 # ── 1. Load ───────────────────────────────────────────────────────────────────
 
-sbti_raw  <- readRDS("data_prepared/sbti_targets.rds")
-nzdpu_raw <- readRDS("data_prepared/nzdpu_french_companies.rds")
+sbti_raw  <- readRDS("shiny_app/data_prepared/sbti_targets.rds")
+nzdpu_raw <- readRDS("shiny_app/data_prepared/nzdpu_french_companies.rds")
 
 
 # ── 2. Filter SBTi: French, Corporate, Absolute targets ──────────────────────
@@ -301,9 +301,9 @@ cat(sprintf("
 
 # ── 9. Save matched dataset ───────────────────────────────────────────────────
 
-saveRDS(matched_indexed, "data_prepared/sbti_nzdpu_matched.rds")
+saveRDS(matched_indexed, "shiny_app/data_prepared/sbti_nzdpu_matched.rds")
 
 message(sprintf(
-  "Saved data_prepared/sbti_nzdpu_matched.rds  |  %d rows × %d cols",
+  "Saved shiny_app/data_prepared/sbti_nzdpu_matched.rds  |  %d rows × %d cols",
   nrow(matched_indexed), ncol(matched_indexed)
 ))

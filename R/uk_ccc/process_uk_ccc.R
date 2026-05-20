@@ -4,7 +4,7 @@
 #
 # Input:  inputs/uk climate change committee/The-Seventh-Carbon-Budget-full-dataset.xlsx
 #           sheet: "Subsector-level data"
-# Output: data_prepared/uk_ccc_subsector.rds
+# Output: shiny_app/data_prepared/uk_ccc_subsector.rds
 
 library(readxl)
 library(dplyr)
@@ -42,10 +42,10 @@ stopifnot(
 
 # ── 4. Save ───────────────────────────────────────────────────────────────────
 
-saveRDS(uk_ccc_subsector, "data_prepared/uk_ccc_subsector.rds")
+saveRDS(uk_ccc_subsector, "shiny_app/data_prepared/uk_ccc_subsector.rds")
 
 message(
-  "Saved data_prepared/uk_ccc_subsector.rds\n",
+  "Saved shiny_app/data_prepared/uk_ccc_subsector.rds\n",
   "  Rows:       ", nrow(uk_ccc_subsector), "\n",
   "  Sectors:    ", length(unique(uk_ccc_subsector$sector)), "\n",
   "  Subsectors: ", length(unique(uk_ccc_subsector$subsector)), "\n",

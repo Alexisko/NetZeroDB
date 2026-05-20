@@ -12,11 +12,11 @@ source("modules/netzero_pathway_mod.R")
 
 # Load data once at startup (shared across all sessions)
 # Path is relative to shiny_app/ (the app's working directory)
-sbti_data    <- readRDS("../data_prepared/sbti_targets.rds")
-uk_ccc_data  <- readRDS("../data_prepared/uk_ccc_subsector.rds")
-snbc_data    <- readRDS("../data_prepared/snbc_emissions.rds")
-iea_data     <- readRDS("../data_prepared/iea_emissions.rds")
-matched_data <- readRDS("../data_prepared/sbti_nzdpu_matched.rds")
+sbti_data    <- readRDS("data_prepared/sbti_targets.rds")
+uk_ccc_data  <- readRDS("data_prepared/uk_ccc_subsector.rds")
+snbc_data    <- readRDS("data_prepared/snbc_emissions.rds")
+iea_data     <- readRDS("data_prepared/iea_emissions.rds")
+matched_data <- readRDS("data_prepared/sbti_nzdpu_matched.rds")
 
 # ── Sidebar choices (computed from data, not hardcoded) ────────────────────────
 

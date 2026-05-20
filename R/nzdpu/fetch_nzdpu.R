@@ -2,7 +2,7 @@
 # Downloads GHG footprint data for French companies from the NZDPU API.
 #
 # Input:  .env (NZDPU API key)
-# Output: data_prepared/nzdpu_french_companies.rds
+# Output: shiny_app/data_prepared/nzdpu_french_companies.rds
 #
 # One row per company × reporting year × data provider.
 # Emissions are in metric tons CO2e (tCO2e) as reported by disclosing companies.
@@ -191,6 +191,6 @@ stopifnot(
 
 # ── 5. Save ───────────────────────────────────────────────────────────────────
 
-saveRDS(nzdpu_df, "data_prepared/nzdpu_french_companies.rds")
-cat(sprintf("Saved %d rows × %d cols → data_prepared/nzdpu_french_companies.rds\n",
+saveRDS(nzdpu_df, "shiny_app/data_prepared/nzdpu_french_companies.rds")
+cat(sprintf("Saved %d rows × %d cols → shiny_app/data_prepared/nzdpu_french_companies.rds\n",
             nrow(nzdpu_df), ncol(nzdpu_df)))

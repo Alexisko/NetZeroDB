@@ -100,7 +100,7 @@ Use stable, readable filenames when possible, for example:
 The main reviewed output should be:
 
 ```text
-outputs/review/sbti_carbon_footprints.csv
+outputs/review/carbon_footprints.csv
 ```
 
 Required columns:

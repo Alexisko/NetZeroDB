@@ -3,7 +3,7 @@
 # and produces a tidy emissions dataset aligned with the harmonized sector taxonomy.
 #
 # Input:  inputs/snbc/snbc_carbon_budget.csv  (semicolon-delimited, wide format)
-# Output: data_prepared/snbc_emissions.rds
+# Output: shiny_app/data_prepared/snbc_emissions.rds
 #
 # Time representation: historical years used as-is; carbon budget periods
 # represented by their midpoint year (2026, 2031, 2036) with a period_label
@@ -111,10 +111,10 @@ stopifnot(
 
 # ── 6. Save ───────────────────────────────────────────────────────────────────
 
-saveRDS(snbc_emissions, "data_prepared/snbc_emissions.rds")
+saveRDS(snbc_emissions, "shiny_app/data_prepared/snbc_emissions.rds")
 
 message(
-  "Saved data_prepared/snbc_emissions.rds\n",
+  "Saved shiny_app/data_prepared/snbc_emissions.rds\n",
   "  Rows:    ", nrow(snbc_emissions), "\n",
   "  Sectors: ", paste(sort(unique(snbc_emissions$sector)), collapse = ", "), "\n",
   "  Years:   ", paste(sort(unique(snbc_emissions$year)), collapse = ", ")
