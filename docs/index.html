@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NetZeroDB — Net Zero Trajectories</title>
+  <meta name="description" content="Explore and compare net-zero emissions trajectories across companies (SBTi), sectors and geographies (UK CCC, SNBC, IEA).">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='7' fill='%2318bc9c'/><path d='M3 5 L7 9 L9 7 L13 11' stroke='white' stroke-width='1.6' fill='none'/></svg>">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/flatly/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="#sbti">NetZeroDB</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav"
+      aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="main-nav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" data-tab="sbti" href="#sbti">SBTi Targets</a></li>
+        <li class="nav-item"><a class="nav-link" data-tab="uk-ccc" href="#uk-ccc">UK Carbon Budget</a></li>
+        <li class="nav-item"><a class="nav-link" data-tab="comparison" href="#comparison">Sectoral Comparison</a></li>
+        <li class="nav-item"><a class="nav-link" data-tab="pathway" href="#pathway">Net-zero Pathway</a></li>
+        <li class="nav-item"><a class="nav-link" data-tab="french" href="#french">French Companies</a></li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" data-tab="methodology" href="#methodology"><i class="bi bi-journal-text me-1"></i>Methodology</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div id="loading" class="d-flex flex-column align-items-center justify-content-center py-5 text-muted">
+  <div class="spinner-border text-primary mb-3" role="status"></div>
+  Loading data…
+</div>
+
+<main class="container-fluid py-3">
+
+  <!-- ── SBTi Targets ─────────────────────────────────────────────────────── -->
+  <section id="tab-sbti" class="tab-pane-page">
+    <div class="row g-3">
+      <aside class="col-lg-3 col-xl-3">
+        <div class="card sidebar-card">
+          <div class="card-header fw-semibold">Filters</div>
+          <div class="card-body">
+            <label class="form-label" for="sbti-company">Company</label>
+            <select id="sbti-company" multiple></select>
+            <hr>
+            <label class="form-label">Scope</label>
+            <div id="sbti-scope"></div>
+            <hr>
+            <label class="form-label" for="sbti-type">Target type</label>
+            <select id="sbti-type" multiple></select>
+          </div>
+        </div>
+      </aside>
+      <div class="col-lg-9 col-xl-9 d-flex flex-column gap-3">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Emissions Reduction Trajectories</span>
+            <button class="btn btn-sm btn-link text-muted p-0" data-fullscreen-toggle title="Expand"><i class="bi bi-arrows-fullscreen"></i></button>
+          </div>
+          <div id="sbti-plot" class="plot"></div>
+        </div>
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Target Details</span>
+            <button class="btn btn-sm btn-link text-muted p-0" data-fullscreen-toggle title="Expand"><i class="bi bi-arrows-fullscreen"></i></button>
+          </div>
+          <div id="sbti-table" class="card-body p-2"></div>
+        </div>
+        <details class="method-note">
+          <summary><i class="bi bi-info-circle me-1"></i>How to read this view</summary>
+          <p>Each line is one company × scope × base year. The base year is set to 100 and each target is plotted at
+            <code>100 × (1 − reduction)</code> in its target year; points are joined by straight lines. Only targets with a base
+            year, a target year and a reduction ≤ 100&nbsp;% are plotted, but all matching targets are listed in the table.
+            Intensity targets plotted in this view describe a reduction in emissions <em>intensity</em>, not absolute emissions.</p>
+          <a href="#methodology/m-sbti">Full methodology →</a>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── UK Carbon Budget ─────────────────────────────────────────────────── -->
+  <section id="tab-uk-ccc" class="tab-pane-page">
+    <div class="row g-3">
+      <aside class="col-lg-3">
+        <div class="card sidebar-card">
+          <div class="card-header fw-semibold">Options</div>
+          <div class="card-body">
+            <label class="form-label">Aggregation level</label>
+            <div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="ukccc-level" id="ukccc-level-sector" value="Sector" checked>
+                <label class="form-check-label" for="ukccc-level-sector">Sector</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="ukccc-level" id="ukccc-level-sub" value="Subsector">
+                <label class="form-check-label" for="ukccc-level-sub">Subsector</label>
+              </div>
+            </div>
+            <hr>
+            <label class="form-label">Sectors</label>
+            <div id="ukccc-sectors"></div>
+            <div id="ukccc-subsector-wrap" class="d-none">
+              <hr>
+              <label class="form-label" for="ukccc-subsectors">Subsectors</label>
+              <select id="ukccc-subsectors" multiple></select>
+            </div>
+            <hr>
+            <label class="form-label">Y-axis</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="ukccc-display" id="ukccc-abs" value="absolute" checked>
+              <label class="form-check-label" for="ukccc-abs">Absolute (MtCO2e)</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="ukccc-display" id="ukccc-rel" value="relative">
+              <label class="form-check-label" for="ukccc-rel">Indexed (2025 = 100)</label>
+            </div>
+          </div>
+        </div>
+      </aside>
+      <div class="col-lg-9 d-flex flex-column gap-3">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span>UK CCC 7th Carbon Budget — Emissions Trajectories</span>
+            <span class="d-flex align-items-center gap-2">
+              <span id="ukccc-subtitle"></span>
+              <button class="btn btn-sm btn-link text-muted p-0" data-fullscreen-toggle title="Expand"><i class="bi bi-arrows-fullscreen"></i></button>
+            </span>
+          </div>
+          <div id="ukccc-plot" class="plot"></div>
+        </div>
+        <details class="method-note">
+          <summary><i class="bi bi-info-circle me-1"></i>How to read this view</summary>
+          <p>Direct emissions (MtCO<sub>2</sub>e) from the UK Climate Change Committee's Seventh Carbon Budget dataset. Solid lines show the
+            <strong>Balanced Pathway</strong> (the CCC's recommended net-zero pathway), dashed lines the <strong>Baseline</strong> (no further
+            policy). Clicking a legend entry toggles both scenarios of that sector. In indexed mode each series is divided by its own 2025 value;
+            series whose 2025 value is zero (e.g. engineered removals) cannot be indexed and are hidden.</p>
+          <a href="#methodology/m-sources">Full methodology →</a>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Sectoral Comparison ──────────────────────────────────────────────── -->
+  <section id="tab-comparison" class="tab-pane-page">
+    <div class="row g-3">
+      <aside class="col-lg-3">
+        <div class="card sidebar-card">
+          <div class="card-header fw-semibold">Options</div>
+          <div class="card-body">
+            <label class="form-label" for="comp-sector">Sector</label>
+            <select id="comp-sector" class="form-select"></select>
+            <hr>
+            <label class="form-label">Sources</label>
+            <div id="comp-sources"></div>
+            <hr>
+            <label class="form-label">Y-axis</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="comp-display" id="comp-abs" value="absolute" checked>
+              <label class="form-check-label" for="comp-abs">Absolute</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="comp-display" id="comp-rel" value="relative">
+              <label class="form-check-label" for="comp-rel">Indexed (2025 = 100)</label>
+            </div>
+          </div>
+        </div>
+      </aside>
+      <div class="col-lg-9 d-flex flex-column gap-3">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span>Sectoral Emissions — Cross-Source Comparison</span>
+            <span class="d-flex align-items-center gap-2">
+              <span id="comp-subtitle" class="text-muted small"></span>
+              <button class="btn btn-sm btn-link text-muted p-0" data-fullscreen-toggle title="Expand"><i class="bi bi-arrows-fullscreen"></i></button>
+            </span>
+          </div>
+          <div id="comp-notes" class="px-3 pt-2 d-none"></div>
+          <div id="comp-plot" class="plot plot-tall"></div>
+        </div>
+        <details class="method-note">
+          <summary><i class="bi bi-info-circle me-1"></i>How to read this view</summary>
+          <p>Each source is mapped to a common set of six sectors (see the <a href="#methodology/m-mapping">sector mapping</a>).
+            Geographies differ — UK (CCC), France (SNBC), World (IEA) — so absolute levels are not comparable; use the
+            <strong>indexed</strong> view to compare the <em>pace</em> of decarbonisation. SNBC values are annual averages over each
+            carbon-budget period, plotted at the period midpoint. 2025 base values for SNBC and IEA are linearly interpolated.</p>
+          <a href="#methodology/m-indexing">Full methodology →</a>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Net-zero Pathway ─────────────────────────────────────────────────── -->
+  <section id="tab-pathway" class="tab-pane-page">
+    <div class="row g-3">
+      <aside class="col-lg-3">
+        <div class="card sidebar-card">
+          <div class="card-header fw-semibold">Options</div>
+          <div class="card-body">
+            <label class="form-label" for="pathway-find">Find company</label>
+            <select id="pathway-find"></select>
+            <hr>
+            <label class="form-label" for="pathway-sector">Sector</label>
+            <select id="pathway-sector" class="form-select mb-2"></select>
+            <label class="form-label" for="pathway-subsector">Subsector</label>
+            <select id="pathway-subsector" class="form-select"></select>
+            <hr>
+            <label class="form-label">Sources</label>
+            <div id="pathway-sources"></div>
+            <div id="pathway-sbti-controls">
+              <hr>
+              <label class="form-label">SBTi scope</label>
+              <div id="pathway-scope"></div>
+              <label class="form-label mt-2" for="pathway-companies">Highlight companies</label>
+              <select id="pathway-companies" multiple></select>
+            </div>
+          </div>
+        </div>
+      </aside>
+      <div class="col-lg-9 d-flex flex-column gap-3">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span>Net-zero Pathway — Indexed Emissions (2025 = 100)</span>
+            <span class="d-flex align-items-center gap-2">
+              <span id="pathway-subtitle" class="text-muted small"></span>
+              <button class="btn btn-sm btn-link text-muted p-0" data-fullscreen-toggle title="Expand"><i class="bi bi-arrows-fullscreen"></i></button>
+            </span>
+          </div>
+          <div id="pathway-notes" class="px-3 pt-2 d-none"></div>
+          <div id="pathway-plot" class="plot plot-tall"></div>
+        </div>
+        <details class="method-note">
+          <summary><i class="bi bi-info-circle me-1"></i>How to read this view</summary>
+          <p>Macro pathways (UK CCC Balanced Pathway, SNBC, IEA Net Zero by 2050) are indexed to 2025 = 100. The orange band shows the
+            interquartile range and the line the median of all eligible SBTi <strong>absolute</strong> targets in the selected sector, each
+            converted into a straight-line path from its base year to its target year and re-indexed to 2025. A target only contributes
+            up to its target year, so the number of targets behind the band shrinks over time (see <em>n targets</em> in the tooltip).
+            Highlighted companies are shown as dotted lines.</p>
+          <a href="#methodology/m-pathway">Full methodology →</a>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── French Companies ─────────────────────────────────────────────────── -->
+  <section id="tab-french" class="tab-pane-page">
+    <div class="row g-3">
+      <aside class="col-lg-3">
+        <div class="card sidebar-card">
+          <div class="card-header fw-semibold">Filters</div>
+          <div class="card-body">
+            <label class="form-label" for="french-company">Company</label>
+            <select id="french-company" multiple></select>
+            <hr>
+            <label class="form-label">Scope</label>
+            <div id="french-scope"></div>
+          </div>
+        </div>
+      </aside>
+      <div class="col-lg-9 d-flex flex-column gap-3">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="value-box bg-primary text-white">
+              <i class="bi bi-buildings"></i>
+              <div><div class="vb-title">Companies matched</div><div class="vb-value" id="french-vb-companies">—</div></div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="value-box text-white" style="background:#198754">
+              <i class="bi bi-check-circle"></i>
+              <div><div class="vb-title">On track (latest year)</div><div class="vb-value" id="french-vb-ontrack">—</div></div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="value-box bg-secondary text-white">
+              <i class="bi bi-calendar-check"></i>
+              <div><div class="vb-title">Most recent disclosure</div><div class="vb-value" id="french-vb-year">—</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Company Trajectory — Actual vs Target</span>
+            <button class="btn btn-sm btn-link text-muted p-0" data-fullscreen-toggle title="Expand"><i class="bi bi-arrows-fullscreen"></i></button>
+          </div>
+          <div id="french-plot" class="plot"></div>
+        </div>
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span>% On Track by Sector (most recent year per target)</span>
+            <button class="btn btn-sm btn-link text-muted p-0" data-fullscreen-toggle title="Expand"><i class="bi bi-arrows-fullscreen"></i></button>
+          </div>
+          <div id="french-sector-plot" class="plot plot-short"></div>
+        </div>
+        <details class="method-note">
+          <summary><i class="bi bi-info-circle me-1"></i>How to read this view</summary>
+          <p>SBTi absolute targets of French corporates are matched to emissions disclosed on the Net-Zero Data Public Utility (NZDPU).
+            The dashed line is the target path from disclosed base-year emissions to the target level; the solid line shows disclosed
+            emissions. A target is <strong>on track</strong> in a given year when disclosed emissions are at or below the straight-line target
+            path. Percentages count <em>targets</em> (latest disclosure year of each), not companies.</p>
+          <a href="#methodology/m-ontrack">Full methodology →</a>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Methodology ──────────────────────────────────────────────────────── -->
+  <section id="tab-methodology" class="tab-pane-page">
+    <div class="row g-4">
+      <nav class="col-lg-3 d-none d-lg-block">
+        <div class="method-toc">
+          <div class="fw-semibold mb-2">Contents</div>
+          <ol class="list-unstyled small">
+            <li><a href="#methodology/m-overview">1. Overview</a></li>
+            <li><a href="#methodology/m-sources">2. Data sources</a></li>
+            <li><a href="#methodology/m-processing">3. Processing principles</a></li>
+            <li><a href="#methodology/m-mapping">4. Sector harmonisation</a></li>
+            <li><a href="#methodology/m-indexing">5. Indexing &amp; interpolation</a></li>
+            <li><a href="#methodology/m-sbti">6. SBTi target trajectories</a></li>
+            <li><a href="#methodology/m-pathway">7. SBTi distribution vs. pathways</a></li>
+            <li><a href="#methodology/m-ontrack">8. On-track assessment (France)</a></li>
+            <li><a href="#methodology/m-limits">9. Limitations</a></li>
+            <li><a href="#methodology/m-repro">10. Reproducibility</a></li>
+          </ol>
+        </div>
+      </nav>
+      <article class="col-lg-9 methodology">
+        <h1 class="h3 mb-3">Methodological notes</h1>
+
+        <h2 id="m-overview">1. Overview</h2>
+        <p>NetZeroDB brings together <strong>top-down</strong> emissions pathways (national carbon budgets and global scenarios) and
+          <strong>bottom-up</strong> corporate commitments (Science Based Targets initiative) so they can be compared on a common basis.
+          The site is a static port of the project's Shiny application: all calculations run in your browser on pre-processed data
+          exported from the R pipeline, and produce the same results as the Shiny app.</p>
+        <p class="text-muted small">Web data generated on <span data-meta="generated_at">—</span>.</p>
+
+        <h2 id="m-sources">2. Data sources</h2>
+        <div class="table-responsive">
+          <table class="table table-sm align-top">
+            <thead class="table-light">
+              <tr><th>Source</th><th>What is used</th><th>Geography</th><th>Unit</th><th>Coverage</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>SBTi</strong><br><span class="small text-muted">Science Based Targets initiative — Target Dashboard export (<code>targets-excel.xlsx</code>, <code>companies-excel.xlsx</code>)</span></td>
+                <td>One row per validated target: scope, type (absolute, intensity, net-zero…), base year, target year, reduction (share of base-year emissions), classification and wording. Company metadata and commitment status are joined by SBTi ID.</td>
+                <td>Global (company level)</td>
+                <td>% reduction</td>
+                <td><span data-meta="sbti.rows">—</span> targets, <span data-meta="sbti.companies">—</span> companies; last update <span data-meta="sbti.date_updated_max">—</span></td>
+              </tr>
+              <tr>
+                <td><strong>UK CCC</strong><br><span class="small text-muted">Climate Change Committee — The Seventh Carbon Budget, full dataset, sheet “Subsector-level data”</span></td>
+                <td>Variable <em>Emissions: direct emissions total</em> for the <em>Balanced Pathway</em> and <em>Baseline</em> scenarios, 13 sectors / 59 subsectors.</td>
+                <td>United Kingdom</td>
+                <td>MtCO<sub>2</sub>e</td>
+                <td>Annual, <span data-meta="uk_ccc.years.0">2025</span>–<span data-meta="uk_ccc.years.1">2050</span></td>
+              </tr>
+              <tr>
+                <td><strong>SNBC</strong><br><span class="small text-muted">Stratégie Nationale Bas-Carbone — French sectoral carbon budgets</span></td>
+                <td>2023 emissions and the 3rd (2024–2028), 4th (2029–2033) and 5th (2034–2038) carbon budgets for six sectors (French names translated); the total row is dropped. Values exclude carbon sinks.</td>
+                <td>France</td>
+                <td>MtCO<sub>2</sub>e / year</td>
+                <td>2023 + three budget periods</td>
+              </tr>
+              <tr>
+                <td><strong>IEA WEO2025</strong><br><span class="small text-muted">International Energy Agency — World Energy Outlook 2025, Annex A free dataset</span></td>
+                <td>Region <em>World</em>, category <em>CO2 total</em>, product <em>Total</em>, flows Transport, Buildings, Industry and Power sector inputs (renamed <em>Energy</em>). Historical 2023 is joined to the <em>Net Zero Emissions by 2050</em> scenario so each sector plots as one trajectory.</td>
+                <td>World</td>
+                <td>Mt CO<sub>2</sub> (energy combustion)</td>
+                <td>2023, 2035, 2040, 2050</td>
+              </tr>
+              <tr>
+                <td><strong>NZDPU</strong><br><span class="small text-muted">Net-Zero Data Public Utility — API (jurisdiction France)</span></td>
+                <td>Disclosed scope 1, scope 2 (location- and market-based) and scope 3 emissions per company and reporting year. Non-disclosed values (“—”) are set to missing.</td>
+                <td>France (company level)</td>
+                <td>tCO<sub>2</sub>e</td>
+                <td>Reporting years <span data-meta="matched.reporting_years.0">—</span>–<span data-meta="matched.reporting_years.1">—</span>; <span data-meta="matched.companies">—</span> companies matched to SBTi</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="m-processing">3. Processing principles</h2>
+        <ul>
+          <li>Each dataset is processed independently by its own script (<code>R/sbti</code>, <code>R/uk_ccc</code>, <code>R/snbc</code>, <code>R/iea</code>, <code>R/nzdpu</code>) and saved to <code>data_prepared/</code>. Raw inputs are never overwritten.</li>
+          <li>Data are stored in tidy, long format with explicit units. Original values and units are preserved; standardised fields (harmonised sector, scope labels, years) are added alongside.</li>
+          <li>SBTi cleaning: literal <code>"NA"</code> strings become missing; company names are trimmed; scope labels are standardised (<code>"1.0"</code> → <code>1</code>, etc.); years given as <code>FY2032</code> are parsed to integers. When a company has several commitment rows the best status is kept (Active &gt; Target set &gt; Extended &gt; Removed).</li>
+          <li>Every script ends with validation checks (no missing keys, expected units, expected year ranges, target year ≥ base year). Values that look wrong are flagged, not altered — e.g. one intensity target with a reduction of 2,500&nbsp;% is kept and labelled “outlier” in the table.</li>
+          <li>Units are never mixed silently. Where sources with different units appear on the same chart (IEA Mt CO<sub>2</sub> vs. MtCO<sub>2</sub>e), a note is shown above the chart.</li>
+        </ul>
+
+        <h2 id="m-mapping">4. Sector harmonisation</h2>
+        <p>Every source uses its own sector classification. A single mapping table (<code>R/utils/sector_mapping.R</code>) assigns each original
+          sector to one of six cross-source <strong>harmonised sectors</strong> — Transport, Buildings, Agriculture, Industry, Energy, Waste —
+          plus sectors that exist in only one source. UK CCC and SBTi sectors also map to a finer <strong>harmonised subsector</strong>; SNBC and
+          IEA only exist at sector level. When values from several original sectors map to the same harmonised sector they are summed
+          (UK CCC) or pooled (SBTi targets).</p>
+        <ul>
+          <li>When a subsector is selected in the pathway view, SNBC and IEA are still drawn at sector level, dimmed, for reference.</li>
+          <li>If UK CCC has no matching subsector (e.g. SBTi’s <em>Chemicals</em>), the whole UK CCC sector is shown instead, dimmed, and a note says so.</li>
+          <li>IEA’s free Annex A dataset does not include Agriculture or Waste.</li>
+        </ul>
+        <div id="method-mapping" class="table-responsive"></div>
+
+        <h2 id="m-indexing">5. Indexing &amp; interpolation</h2>
+        <p>Because the sources cover different geographies (UK, France, World) and gases (CO<sub>2</sub>e vs. CO<sub>2</sub>), absolute
+          levels cannot be compared directly. Comparisons therefore use an <strong>emissions index with 2025 = 100</strong>:</p>
+        <p class="formula">index<sub>t</sub> = 100 × E<sub>t</sub> / E<sub>2025</sub></p>
+        <ul>
+          <li><strong>UK CCC</strong> has an observation for 2025. <strong>SNBC</strong> (2023, 2026, …) and <strong>IEA</strong> (2023, 2035, …) do not: their 2025 value is obtained by linear interpolation between the two surrounding points.</li>
+          <li><strong>SNBC carbon budgets</strong> are annual averages over five-year periods; each is plotted at the midpoint of its period (2026, 2031, 2036), and the tooltip shows the period.</li>
+          <li>Series whose 2025 value is zero cannot be indexed and are hidden (the chart subtitle reports how many).</li>
+          <li>Lines between data points are straight; no smoothing or extrapolation is applied.</li>
+        </ul>
+
+        <h2 id="m-sbti">6. SBTi target trajectories</h2>
+        <p>An SBTi target states a reduction <em>r</em> (share of base-year emissions) to be achieved by a target year. In the
+          <a href="#sbti">SBTi Targets</a> view each target is turned into points of an emissions index with the base year = 100:</p>
+        <p class="formula">index(base year) = 100 &nbsp;&nbsp;·&nbsp;&nbsp; index(target year) = 100 × (1 − r)</p>
+        <ul>
+          <li>Targets sharing the same company, scope and base year are stitched into one line (base year, then targets in chronological order). Targets with different base years are drawn as separate lines.</li>
+          <li>Only rows with a base year, a target year and r ≤ 1 are plotted; every matching row is listed in the table, where the wording is the SBTi <em>target wording</em> (or the full target language when missing).</li>
+          <li>The default filter shows <em>Absolute</em> targets. Intensity targets can be added, but their reduction refers to an intensity metric (e.g. tCO<sub>2</sub>e per unit of output), not absolute emissions.</li>
+          <li>SBTi does not prescribe a linear path between base and target year: the straight lines are a visual simplification.</li>
+        </ul>
+
+        <h2 id="m-pathway">7. SBTi target distribution vs. sector pathways</h2>
+        <p>The <a href="#pathway">Net-zero Pathway</a> view summarises all relevant corporate targets of a sector and overlays them on the macro pathways.</p>
+        <ol>
+          <li><strong>Eligible targets</strong>: SBTi sectors mapped to the selected harmonised sector (and subsector, if any); type <em>Absolute</em>; commitment status Active, Target set or not reported; selected scopes; base year ≤ 2025 and target year ≥ 2026; reduction, base year and target year all reported.</li>
+          <li><strong>Per-target path</strong>: a straight line from 100 at the base year to 100 × (1 − r) at the target year, evaluated each year from 2023 to 2050. No extrapolation: a target contributes only between its base year and its target year.</li>
+          <li><strong>Re-indexing</strong>: each path is divided by its own 2025 value (× 100) so that all targets — whatever their base year — start from 100 in 2025, like the macro pathways.</li>
+          <li><strong>Aggregation</strong>: for every year, the 25th percentile, median and 75th percentile of the re-indexed values are computed across targets (linear-interpolation quantiles, R’s default type 7). The shaded band is the interquartile range.</li>
+        </ol>
+        <p>Points to keep in mind: each <em>target</em> counts once, so a company with several absolute targets (e.g. scopes 1+2 and 3) weighs more;
+          the set of targets changes over time because short-dated targets drop out after their target year (most targets end in 2030–2035), so
+          the band after ~2035 rests on fewer, longer-term targets; companies are not weighted by their emissions.</p>
+        <p>Highlighted companies are drawn with the same rule, as one line per company × scope × base year joining all its target points.
+          The tooltip shows the reduction relative to the base year (<em>Target</em>) and relative to 2025 (<em>Index</em>).
+          <em>Find company</em> jumps to the company’s most frequent SBTi sector, ticks the scopes it has targets for and highlights it.</p>
+
+        <h2 id="m-ontrack">8. On-track assessment (French companies)</h2>
+        <p>The <a href="#french">French Companies</a> view compares what French corporates <em>committed to</em> (SBTi) with what they
+          <em>disclosed</em> (NZDPU).</p>
+        <ol>
+          <li><strong>Target selection</strong>: SBTi targets with location France, organisation type Corporate and type Absolute (intensity targets cannot be compared with absolute disclosures).</li>
+          <li><strong>Company matching</strong>, in order of priority: (a) exact LEI; (b) exact normalised name (lower case, punctuation removed, whitespace squished); (c) a manually curated list (<code>inputs/manual_matches.csv</code>).</li>
+          <li><strong>Scope alignment</strong>: NZDPU columns are summed to match each SBTi scope boundary — scope 1; scope 2 <em>location-based</em> (used by default); scope 3 total; and their combinations (1+2, 1+3, 2+3, 1+2+3). A missing component makes the sum missing.</li>
+          <li><strong>Base emissions</strong>: the NZDPU value disclosed for the target’s base year. Targets whose base year is not disclosed have no trajectory and no on-track status.</li>
+          <li><strong>Target path</strong>: linear from 100 at the base year to 100 × (1 − r) at the target year (flat at 100 before the base year and at the final level after the target year).</li>
+          <li><strong>On track</strong> in a given reporting year when the emissions index (disclosed / base × 100) is ≤ the target path index.</li>
+        </ol>
+        <p>The headline percentage and the sector chart use, for every target (SBTi ID × scope × target year), its <em>most recent</em> reporting year
+          (targets whose latest year has no status are left out), and count targets, not companies. Sectors are NZDPU’s SICS sectors. Unmatched companies are listed in
+          <code>outputs/review/</code> for manual review.</p>
+
+        <h2 id="m-limits">9. Limitations</h2>
+        <ul>
+          <li><strong>Different perimeters</strong>: UK CCC and SNBC are territorial national inventories; IEA covers world energy-related CO<sub>2</sub>; SBTi targets cover a company’s global operations and, for scope 3, its value chain. Indexed comparisons show relative ambition, not equivalent quantities.</li>
+          <li><strong>Gases and sources</strong>: IEA values are CO<sub>2</sub> from fuel combustion only (Mt CO<sub>2</sub>); others are all GHG (MtCO<sub>2</sub>e). IEA “Energy” corresponds to power-sector inputs.</li>
+          <li><strong>Linear paths</strong>: straight lines between base and target years (and between sparse scenario points) are a simplification of real trajectories.</li>
+          <li><strong>Sector mapping</strong> is a judgement call: SBTi sectors are industry classifications (what a company sells), whereas national inventories classify where emissions occur.</li>
+          <li><strong>Calendar vs. fiscal years</strong> are not distinguished. SBTi target values are used as reported; a single outlier (&gt; 100&nbsp;%) is kept but excluded from charts.</li>
+          <li><strong>Disclosure coverage</strong>: NZDPU coverage is partial and recent (few 2023 disclosures at the time of extraction); scope 3 disclosures are often incomplete and methodologies change over time.</li>
+          <li><strong>Snapshots</strong>: all datasets are static extracts; they are refreshed only when the pipeline is re-run.</li>
+        </ul>
+
+        <h2 id="m-repro">10. Reproducibility</h2>
+        <ol>
+          <li>Run the R processing scripts (<code>R/sbti/process_sbti.R</code>, <code>R/uk_ccc/process_uk_ccc.R</code>, <code>R/snbc/process_snbc.R</code>, <code>R/iea/process_iea.R</code>, <code>R/nzdpu/fetch_nzdpu.R</code>, then <code>R/analysis/sbti_nzdpu_match.R</code>) to rebuild <code>data_prepared/*.rds</code>.</li>
+          <li>Run <code>python scripts/export_web_data.py</code> to export them to <code>docs/data/*.json</code> (sector mapping is read directly from <code>R/utils/sector_mapping.R</code>).</li>
+          <li>Commit the updated <code>docs/</code> folder: the site is static and is served as-is by GitHub Pages or Vercel.</li>
+        </ol>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer class="text-center text-muted small py-3 border-top">
+  NetZeroDB · Data: SBTi, UK Climate Change Committee, SNBC, IEA WEO 2025, NZDPU ·
+  <a href="#methodology">Methodology</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
